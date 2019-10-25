@@ -1,0 +1,5 @@
+﻿  p6q1.cpp
+C:\Users\JT\source\repos\Practical 06\Practical 06\p6q1.cpp(13,32): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Users\JT\source\repos\Practical 06\Practical 06\p6q1.cpp(14,32): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Users\JT\source\repos\Practical 06\Practical 06\p6q1.cpp(15,32): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+  Practical 06.vcxproj -> C:\Users\JT\source\repos\Practical 06\Debug\Practical 06.exe
