@@ -31,6 +31,7 @@ float dif[] = { 0, 1, 0 };
 float spe[] = { 0, 1, 0 };
 float pos[] = { 1, 1, 0 };
 float pos2[] = { -1, 1, 0 };
+float ambM[] = { 0, 0, 1 };
 
 LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -186,7 +187,7 @@ bool initPixelFormat(HDC hdc)
 }
 //--------------------------------------------------------------------
 /*
-	Basic Shape
+Basic Shape
 */
 
 void drawSphere() {
@@ -316,18 +317,23 @@ void drawCube() {
 
 //--------------------------------------------------------------------
 /*
-	Construction
+Construction
 */
 
 
 
 //--------------------------------------------------------------------
 /*
-	Settings
+Settings
 */
 
 void setLighting() {
 	glEnable(GL_LIGHTING);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, amb);
+	glLightfv(GL_LIGHT0, GL_POSITION, pos);
+	glEnable(GL_LIGHT0);
+
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, ambM);
 }
 
 //--------------------------------------------------------------------
@@ -336,18 +342,7 @@ void display() {
 	glClearColor(0.18f, 0.04f, 0.14f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
-
-	// Construct here
-	glEnable(GL_LIGHTING);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, amb);
-	glLightfv(GL_LIGHT0, GL_POSITION, pos);
-	glEnable(GL_LIGHT0);
-
-	glLightfv(GL_LIGHT1, GL_DIFFUSE, dif);
-	//glLightfv(GL_LIGHT1, GL_SPECULAR, spe);
-	glLightfv(GL_LIGHT1, GL_POSITION, pos2);
-	glEnable(GL_LIGHT1);
-	//
+	setLighting();
 
 
 	glPushMatrix();

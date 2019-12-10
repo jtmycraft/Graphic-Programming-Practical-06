@@ -26,11 +26,14 @@ float cameraPosX = 0, cameraPosY = 0, cameraPosZ = 0, cameraRotX = 0, cameraRotY
 POINT cursorPos;
 
 // Lighting
-float amb[] = { 0, 1, 0 };
-float dif[] = { 0, 1, 0 };
-float spe[] = { 0, 1, 0 };
-float pos[] = { 1, 1, 0 };
-float pos2[] = { -1, 1, 0 };
+float lightPos[] = { 0, 1, 0 };
+float lightMovementSpd = 0.1f;
+float lightDif[] = { 1, 0, 0 };
+
+// Model
+int currentModel = 0;
+float modelColor[] = { 0.3, 0.6, 0.3 };
+float rotDeg = 0.0, rotSpd = 1;
 
 LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -117,8 +120,40 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 		case 0x32:
 			currentMode = 1;
 			break;
+		case 'O':
+			currentModel = 0;
+			break;
+		case 'P':
+			currentModel = 1;
+			break;
+		
+		// Light Movement
+		case VK_NUMPAD8:
+			lightPos[1] += lightMovementSpd;
+			break;
+		case VK_NUMPAD2:
+			lightPos[1] -= lightMovementSpd;
+			break;
+		case VK_NUMPAD4:
+			lightPos[0] -= lightMovementSpd;
+			break;
+		case VK_NUMPAD6:
+			lightPos[0] += lightMovementSpd;
+			break;
+		case VK_NUMPAD7:
+			lightPos[2] += lightMovementSpd;
+			break;
+		case VK_NUMPAD9:
+			lightPos[2] -= lightMovementSpd;
+			break;
+		case VK_DOWN:
+			rotDeg -= rotSpd;
+			break;
+		case VK_UP:
+			rotDeg += rotSpd;
+			break;
 
-			// Eye movement
+		// Eye movement
 		case 0x57: // Ww
 			yrotrad = (cameraRotY / 180 * PI);
 			xrotrad = (cameraRotX / 180 * PI);
@@ -186,7 +221,7 @@ bool initPixelFormat(HDC hdc)
 }
 //--------------------------------------------------------------------
 /*
-	Basic Shape
+Basic Shape
 */
 
 void drawSphere() {
@@ -316,18 +351,23 @@ void drawCube() {
 
 //--------------------------------------------------------------------
 /*
-	Construction
+Construction
 */
 
 
 
 //--------------------------------------------------------------------
 /*
-	Settings
+Settings
 */
 
 void setLighting() {
 	glEnable(GL_LIGHTING);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, modelColor);
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+	glEnable(GL_LIGHT0);
+
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, lightDif);
 }
 
 //--------------------------------------------------------------------
@@ -336,23 +376,29 @@ void display() {
 	glClearColor(0.18f, 0.04f, 0.14f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
+	
+	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHTING);
+	glPushMatrix();
+	glColor3f(1, 1, 1);
+	glTranslatef(lightPos[0], lightPos[1], lightPos[2]);
+	glScalef(0.1f, 0.1f, 0.1f);
+	drawSphere();
+	glPopMatrix();
 
-	// Construct here
-	glEnable(GL_LIGHTING);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, amb);
-	glLightfv(GL_LIGHT0, GL_POSITION, pos);
-	glEnable(GL_LIGHT0);
-
-	glLightfv(GL_LIGHT1, GL_DIFFUSE, dif);
-	//glLightfv(GL_LIGHT1, GL_SPECULAR, spe);
-	glLightfv(GL_LIGHT1, GL_POSITION, pos2);
-	glEnable(GL_LIGHT1);
-	//
-
+	setLighting();
 
 	glPushMatrix();
-	glColor3f(0.3, 0.6, 0.3);
-	drawSphere();
+	glColor3f(modelColor[0], modelColor[1], modelColor[2]);
+	glRotatef(rotDeg, 1, 1, 1);
+	switch (currentModel) {
+	case 0:
+		drawSphere();
+		break;
+	case 1:
+		drawPyramid();
+		break;
+	}
 	glPopMatrix();
 }
 
