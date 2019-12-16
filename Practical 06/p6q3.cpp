@@ -13,6 +13,7 @@
 
 // Mode
 int currentMode = 0;
+bool toggleLighting = true;
 
 // Screen
 const float screenWidth = 800, screenHeight = 600;
@@ -178,6 +179,13 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			cameraPosX += float(cos(yrotrad)) * 0.05;
 			cameraPosZ += float(sin(yrotrad)) * 0.05;
 			break;
+		case VK_SPACE:
+			if (toggleLighting) {
+				toggleLighting = false;
+			}
+			else {
+				toggleLighting = true;
+			}
 		}
 		break;
 
@@ -377,16 +385,24 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 	
-	glDisable(GL_LIGHT0);
-	glDisable(GL_LIGHTING);
-	glPushMatrix();
-	glColor3f(1, 1, 1);
-	glTranslatef(lightPos[0], lightPos[1], lightPos[2]);
-	glScalef(0.1f, 0.1f, 0.1f);
-	drawSphere();
-	glPopMatrix();
+	if (toggleLighting) {
+		glDisable(GL_LIGHT0);
+		glDisable(GL_LIGHTING);
 
-	setLighting();
+		glPushMatrix();
+		glColor3f(1, 1, 1);
+		glTranslatef(lightPos[0], lightPos[1], lightPos[2]);
+		glScalef(0.1f, 0.1f, 0.1f);
+		drawSphere();
+		glPopMatrix();
+
+
+		setLighting();
+	}
+	else {
+		glDisable(GL_LIGHT0);
+		glDisable(GL_LIGHTING);
+	}
 
 	glPushMatrix();
 	glColor3f(modelColor[0], modelColor[1], modelColor[2]);
@@ -412,8 +428,8 @@ void setCamera() {
 		glOrtho(orthoLeft, orthoRight, orthoBottom, orthoTop, orthoZNear, orthoZFar);
 		break;
 	case 1:
-		gluPerspective(prespFovy, screenWidth / screenHeight, -1, 1);
-		glFrustum(prespLeft, prespRight, prespBottom, prespTop, prespZNear, prespZFar);
+		gluPerspective(prespFovy, screenWidth / screenHeight, 0.1, 1000);
+		//glFrustum(prespLeft, prespRight, prespBottom, prespTop, prespZNear, prespZFar);
 
 
 		if (GetCursorPos(&cursorPos)) {
